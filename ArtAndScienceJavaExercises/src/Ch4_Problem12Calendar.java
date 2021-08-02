@@ -1,63 +1,74 @@
-import acm.program.*;
+/*
+ * File: Calendar.java
+ * -----------------------------
+ * This is a program to make a calendar for a month.
+ * Textbook page 98. Q 12.
+ */
 
 import acm.graphics.*;
+import acm.program.*;
 
-/*This program draws a Calendar*
- *
- */
-public class Ch4_Problem12Calendar extends GraphicsProgram {
-
-	//shows the days in a month
+public class Calendar extends GraphicsProgram {
+	/*The number of days in the month*/
+	private static final int DAYS_IN_MONTH = 29;
 	
+	/*The day of the week on which the month starts*/
+	/*(Sunday =0, Monday = 1, Tuesday = 2, and so on.)*/
+	private static final int DAY_MONTH_STARTS = 2;
 	
-	/*Shows the day when a month starts,
-	 * for example 0=sunday 1=monday 2= Tuesday etc.
-	 *  */
-	private static final int DAY_MONTH_STARTS=5;
-	
-	private static final int DAYS_IN_MONTH = 31;
-	
-	//These constants define the calendar day with and hight
+	/*The width in pixels of a day on the calendar */
 	private static final int DAY_WIDTH = 40;
+	
+	/*The height in pixels of a day on the calendar */
 	private static final int DAY_HEIGHT = 30;
 	
-	
-	//This creates our Calendar, see previous exercise for details.
-	public void run() {
+	public void run(){
+		/*Define how many rows the calendar needs.*/
+		int ROW_IN_CALENDAR; 
+		if ((DAYS_IN_MONTH + DAY_MONTH_STARTS)% 7 == 0){
+			ROW_IN_CALENDAR = (DAYS_IN_MONTH + DAY_MONTH_STARTS)/7;
+		}else{
+			ROW_IN_CALENDAR = (DAYS_IN_MONTH + DAY_MONTH_STARTS)/7 + 1;
+		}
+
+		/*Draw the boxes for all days*/
+		int dayX = 0;
+		int dayY = 0;
+		for(; ROW_IN_CALENDAR > 0; ROW_IN_CALENDAR--){
+			for(int c = 0; c < 7; c++){
+				GRect day = new GRect(dayX, dayY, DAY_WIDTH, DAY_HEIGHT);
+				add (day);
+				dayX += DAY_WIDTH;
+			}
+			dayX = 0;
+			dayY += DAY_HEIGHT;
+		}
 		
-		int day= 0;
+		/*Write down the first line of date. */
+		int date = 1;
+		int firstLineX = DAY_MONTH_STARTS * DAY_WIDTH + 2;
+		int firstLineY = 10;
+		for (; firstLineX < DAY_WIDTH * 7; firstLineX += DAY_WIDTH){
+			GLabel firstLineDate = new GLabel ("" + date, firstLineX, firstLineY);//So smart!
+			add(firstLineDate);
+			date ++;
+		}
 		
-		for (int i=0; i<6; i++) {
-			
-			for (int j=0; j< 7; j++) {
-				
-				int x= j*DAY_WIDTH;
-				int y= i*DAY_HEIGHT;
-				add(new GRect(x, y, DAY_WIDTH, DAY_HEIGHT));
-				
-				/*neat trick!!!!
-				 * 
-				 * DAY_MONTH_STARTS*i+j>=9
-				 * 
-				 * i,j means: going direction x=j and going direction y=i
-				 * The above statement just means that 
-				 * when the first row j is being compiled
-				 * j goes in x direction, it is first = 1, then = 2 then = 3 then 4 then 5 then 6 then 7(X has to change for the next square in row to be created)
-				 * i is constant and is = 0 then =1
-				 * Therefore for the compiler you have the values:
-				 * 5x0 + 0, 5x1+1, 5x1+2, 5x1+3, 5x1+4
-				 * When the compiler sees that the coordinate 5x1+4=9 THEN
-				 * it executes the "day++" variable. 
-				 * 
-				 * 
-				 * */
-				if (DAY_MONTH_STARTS*i+j>=9 && day < DAYS_IN_MONTH) {
-					
-					day++;
-					
-					add(new GLabel(""+day), x, y);
-				}	
-			}	
-		}	
-	}	
+		/*Write down the rest of the date. */
+		int lineX = 2;
+		int lineY = DAY_HEIGHT + 10;
+		while(date <= DAYS_IN_MONTH){
+			for (; lineX < DAY_WIDTH * 7;){
+				GLabel otherDate = new GLabel ("" + date, lineX, lineY);
+				add(otherDate);
+				date ++;
+				if (date > DAYS_IN_MONTH)break;
+				lineX += DAY_WIDTH;
+			}
+			lineX = 2;
+			lineY += DAY_HEIGHT;
+		}
+		
+	}
+
 }
